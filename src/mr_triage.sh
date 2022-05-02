@@ -41,7 +41,11 @@ bet_flag=$3; shift
 echo ${bet_flag}
 if [ $bet_flag = 1 ] ; then
 	bet $nii_file ${nii_file}_brain -R -f 0.5 -g 0 -m
-	nii_file=${nii_file}_brain
+	fast -t 1 -n 3 -H 0.1 -I 4 -l 20.0 -B -b -o ${nii_file}_brain_corr ${nii_file}_brain
+	wait
+	#nii_file=`ls ${BASEDIR}/*_brain_corr_restore.nii.gz` 
+	mv ${nii_file}_brain_corr_restore.nii.gz ${nii_file}_brain.nii.gz # se asigna archivo luego de corrección de bias para continuar procesamiento
+	nii_file=${nii_file}_brain	
 	mask_file=${nii_file}_mask
 	fslmaths $mask_file -eroF $mask_file
 	csf_thr=`fslstats $nii_file -k $mask_file -s`
